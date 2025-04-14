@@ -29,7 +29,8 @@ router.route("/create").get(BlogPost.create).post(BlogPost.create);
 router.get("/:postId", BlogPost.read);
 
 // Update a specific post by ID
-router.route("/:postId/update").post(BlogPost.update);
+// hem get istegi atacak hem post istegi atacak
+router.route("/:postId/update").all(BlogPost.update);
 
 // Delete a specific post by ID
 router.delete("/:postId/delete", BlogPost.delete);

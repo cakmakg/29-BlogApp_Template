@@ -10,7 +10,6 @@ require("dotenv").config();
 const PORT = process.env.PORT || 8000;
 
 const session = require("cookie-session");
-const { openDelimiter, closeDelimiter } = require("ejs");
 app.use(
   session({ secret: process.env.SECRET_KEY || "secret_keys_for_cookies" }),
 );
@@ -19,31 +18,46 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-//EJS
-app.set("view engine","ejs")
-//<% %> isretlere delimater denir
-// Default delimeter <% %>
- //! default delimiter degistirmek icin
+/* -------------------------------------------------------------------------- */
+// EJS 
+
+
+// <%  %> işaretler delimiter denir. 
+// Default delimeter <% %> 
+// {%     %} 
+
+//! Default delimiter değiştirmek için 1.Yöntem
 // require("ejs")
-// ejs.delimiter='#'
-// ejs.openDelimiter="{"
-// ejs.closeDelimiter="}"
+// ejs.delimiter="#"
+// ejs.openDelimiter="{"   // < yerine {  kullanmak için
+// ejs.closeDelimiter="}"  // > yerine }  kullanmak için
 
-//! 2. yönten
+//! 2.yöntem
+
 app.set("view engine","ejs")
 
-app.set("view options",{
+app.set("view options", {
   openDelimiter:"{",
   closeDelimiter:"}"
-})
+} )
 
+
+// Default olarak views yerine pubic klasörünü tanımlıyoruz
 app.set("views","./public")
+
+
 
 // Connect to MongoDB with Mongoose:
 require("./src/dbConnection");
 
 // Searching&Sorting&Pagination:
 app.use(require("./src/middlewares/queryHandler"));
+
+// EJs de global alanda değişken saklama
+app.use((req,res,next)=>{
+  res.locals.user=req.session?.user
+  next()
+})
 
 // StaticFiles:
 app.use("/assets", express.static("./public/assets"));
@@ -66,4 +80,4 @@ app.use(require("./src/middlewares/errorHandler"));
 app.listen(PORT, () => console.log("Running: http://127.0.0.1:" + PORT));
 
 //require('./src/helpers/sync')()
-//require("./src/helpers/sync2")();
+// require("./src/helpers/sync2")();
